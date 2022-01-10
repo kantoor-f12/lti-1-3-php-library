@@ -9,7 +9,7 @@ class Redirect {
     private static $CAN_302_COOKIE = 'LTI1p3_302_Redirect';
 
     public function __construct($location, $referer_query = null) {
-        $this->nonce = uniqid('', true);
+        $this->nonce = bin2hex(random_bytes(32));
         
         $csp_header = getenv('CSP_HEADER');
         $csp_embed_header = getenv('CSP_EMBED_HEADER');
