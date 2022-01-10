@@ -3,11 +3,23 @@ namespace IMSGlobal\LTI;
 
 class Redirect {
 
+    private $nonce;
     private $location;
     private $referer_query;
     private static $CAN_302_COOKIE = 'LTI1p3_302_Redirect';
 
     public function __construct($location, $referer_query = null) {
+        $this->nonce = uniqid('', true);
+        
+        $csp_header = getenv('CSP_HEADER');
+        $csp_embed_header = getenv('CSP_EMBED_HEADER');
+        $csp_nonce_header = "script-src 'nonce-$this->nonce'";
+        $full_csp_header = implode(';', [$csp_header, $csp_embed_header, $csp_nonce_header]);
+
+        if ($full_csp_header) {
+            header("Content-Security-Policy: $full_csp_header");
+        }
+
         $this->location = $location;
         $this->referer_query = $referer_query;
     }
@@ -35,7 +47,7 @@ class Redirect {
     public function do_js_redirect() {
         ?>
         <a id="try-again" target="_blank">If you are not automatically redirected, click here to continue</a>
-        <script>
+        <script nonce="<?php echo $this->nonce ?>">
 
         document.getElementById('try-again').href=<?php
         if (empty($this->referer_query)) {
