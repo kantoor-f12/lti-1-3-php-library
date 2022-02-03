@@ -313,7 +313,7 @@ class LTI_Message_Launch {
     private function validate_deployment() {
         $client_id = $this->get_client_id_from_jwt($this->jwt);
 
-        // Find deployment. Get client_id from aud for now, but see https://bitbucket.org/openid/connect/issues/973/.
+        // Find deployment.
         $deployment = $this->db->find_deployment(
             $this->jwt['body']['iss'],
             $this->jwt['body']['https://purl.imsglobal.org/spec/lti/claim/deployment_id'],
